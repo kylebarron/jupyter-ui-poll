@@ -102,14 +102,25 @@ class KernelWrapper:
                     kernel._publish_status("idle")
 
     async def do_one_iteration(self):
-        try:
-            await self._kernel.do_one_iteration()
-            # reset stdio back to original cell
-            self._reset_output()
-        except QueueEmpty:
-            # it's probably a bug in ipykernel,
-            # .do_one_iteration() should not throw
-            return
+        if iscoroutinefunction(self._kernel.do_one_iteration()):
+            try:
+                await self._kernel.do_one_iteration()
+                # reset stdio back to original cell
+                self._reset_output()
+            except QueueEmpty:
+                # it's probably a bug in ipykernel,
+                # .do_one_iteration() should not throw
+                return
+        else:
+            try:
+                self._kernel.do_one_iteration()
+                # reset stdio back to original cell
+                self._reset_output()
+            except QueueEmpty:
+                # it's probably a bug in ipykernel,
+                # .do_one_iteration() should not throw
+                return
+
 
     def _post_run_cell_hook(self, *args, **kwargs):
         self._shell.events.unregister("post_run_cell", self._post_run_cell_hook)
