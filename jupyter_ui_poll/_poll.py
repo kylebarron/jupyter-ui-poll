@@ -103,7 +103,7 @@ class KernelWrapper:
 
     async def do_one_iteration(self):
         try:
-            if iscoroutinefunction(self._kernel.do_one_iteration()):
+            if iscoroutinefunction(self._kernel.do_one_iteration):
                 await self._kernel.do_one_iteration()
             else:
                 self._kernel.do_one_iteration()
