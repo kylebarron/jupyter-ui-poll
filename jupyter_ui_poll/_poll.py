@@ -111,7 +111,7 @@ class KernelWrapper:
             # .do_one_iteration() should not throw
             return
 
-    def _post_run_cell_hook(self, _):
+    def _post_run_cell_hook(self, *args, **kwargs):
         self._shell.events.unregister("post_run_cell", self._post_run_cell_hook)
         self.restore()
         KernelWrapper._current = None
